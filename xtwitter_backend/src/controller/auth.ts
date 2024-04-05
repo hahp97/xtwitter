@@ -10,10 +10,6 @@ const router = express.Router();
 
 // POST /api/v1/auth/login
 router.post("/login", async (req: any, res: Response, next: NextFunction) => {
-  // try login
-  // if success
-  // return access token
-  console.log("req.body", req.body);
   try {
     const user = req.body;
     const { mongo } = req.context || {};
@@ -24,7 +20,7 @@ router.post("/login", async (req: any, res: Response, next: NextFunction) => {
     res.status(200).send({
       message: "Login success",
       user: {
-        userName: existingUser.userName,
+        username: existingUser.username,
         email: existingUser.email,
       },
       token: token,
@@ -44,12 +40,6 @@ router.post("/register", async (req: any, res) => {
   } catch (error) {
     res.status(400).json(error);
   }
-});
-
-// POST /api/v1/auth/logout
-router.post("/logout", async (req: any, res) => {
-  res.clearCookie("accessToken");
-  res.status(200).json({ message: "Logout success" });
 });
 
 // GET /api/v1/auth/me

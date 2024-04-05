@@ -28,6 +28,14 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     return;
   }
 
+  if (error.name === "BadRequestError") {
+    res.status(400).json({
+      message: "Bad request",
+      description: error.message,
+    });
+    return;
+  }
+
   res.status(500).json({
     message: "An unexpected error occurred",
     description: (error as Error).message,

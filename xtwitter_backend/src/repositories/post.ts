@@ -38,16 +38,3 @@ export const getPostById = async (id: string, mongo: any): Promise<any> => {
     throw new Error("500");
   }
 };
-
-export const addComment = async (
-  postId: string,
-  comment: Comment,
-  mongo: any
-) => {
-  try {
-    return await mongo.Comment.insertOne({ ...comment, postId });
-  } catch (error) {
-    console.log({ error });
-    throw new Error("500");
-  }
-};

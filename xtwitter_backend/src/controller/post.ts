@@ -1,21 +1,23 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import { createPost, getDetailPosts } from "../services/post";
 import { getPostById, getPosts } from "../repositories/post";
+import { NoResultReturnedError } from "../errors/noResultReturnedError";
 
 const router = express.Router();
 
 // POST /api/v1/posts
-router.post("/", async (req: any, res: any) => {
+router.post("/", async (req: any, res: any, next: NextFunction) => {
+  const { mongo, user } = req.context;
+  const post = req.body;
+
+  if (!post || !user) {
+    return next(new NoResultReturnedError("Missing required fields"));
+  }
+
+  console.log({ post, user });
+
   try {
-    const { mongo, user } = req.context || {};
-    const post = req.body;
-
-    console.log({ post: post, user: user });
-
-    await createPost(
-      { ...post, userId: user._id, userName: user.userName },
-      mongo
-    );
+    await createPost({ ...post, userId: user._id }, mongo);
 
     res.status(201).json({ message: "Post created" });
   } catch (error) {

@@ -1,16 +1,20 @@
-import { RequestHandler } from "express";
-
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { tokenize } from "../utils/token";
 import { UnauthenticatedError } from "../errors/unauthenticatedError";
-import { UnauthorisedError } from "../errors/unauthorisedError";
 
-export const authHandler: RequestHandler = (req: any, res: any, next: any) => {
-  const { user } = req.context || {};
-
-  if (!user) {
-    return new UnauthenticatedError("Unauthenticated");
+const authenticateUser = async (req: any, res: any, next: any) => {
+  const accessToken = req.headers["x-token"];
+  if (accessToken) {
+    try {
+      const user = tokenize.verify(accessToken);
+      req.context.user = user?.data;
+      next();
+    } catch (error) {
+      res.status(401).json({ error: "Invalid access token" });
+    }
+  } else {
+    next();
   }
-
-  next();
 };
+
+export default authenticateUser;

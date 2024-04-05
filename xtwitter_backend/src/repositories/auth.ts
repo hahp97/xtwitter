@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import connectDb from "../database";
 import { ObjectId } from "mongodb";
 export interface User {
-  userName: string;
+  username: string;
   email: string;
   password: string;
   _id?: string;
