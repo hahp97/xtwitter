@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*", ""]
+    },
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
+    "moduleDetection": "force",
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    /* ----- */
+    "lib": ["dom", "es2022"],
+    /* ----- */
+    "declaration": true,
+    "composite": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "experimentalDecorators": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "utils/createTable.js",
+    "app/api/socket/route.ts",
+    "actions/chat/lmao.mjs",
+    "server.mjs",
+    "helper/lib/prismadb.ts",
+    "helper/lib/prismadbserver.js"
+  ],
+  "exclude": ["node_modules"]
+}
