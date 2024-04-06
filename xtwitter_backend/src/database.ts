@@ -68,6 +68,7 @@ const connectDB = async () => {
       User: db.collection("users"),
       Post: db.collection("posts"),
       Comment: db.collection("comments"),
+      Like: db.collection("likes"),
     });
 
     return {

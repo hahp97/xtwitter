@@ -1,36 +1,34 @@
-import { getCommentsByPostId } from "../repositories/comments";
-import { createNewPost, getPostById, getPosts } from "../repositories/post";
+import { Post, createPost, getPostById, getPosts } from "../repositories/post";
 
-export const createPost = async (post: any, mongo: any): Promise<any> => {
+export const createNewPost = async (post: Post, mongo: any): Promise<any> => {
   try {
-    return await createNewPost(
-      {
-        ...post,
-        createdAt: new Date(),
-        updatedAt: null,
-      },
-      mongo
-    );
+    const newPost: Post = {
+      ...post,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    return await createPost(newPost, mongo);
   } catch (error) {
     console.log({ error });
     throw new Error("500");
   }
 };
 
-export const getDetailPosts = async (
-  mongo: any,
-  postId: string
+export const getAllPosts = async (mongo: any): Promise<any> => {
+  try {
+    return await getPosts(mongo);
+  } catch (error) {
+    console.log({ error });
+    throw new Error("500");
+  }
+};
+
+export const getPostDetails = async (
+  postId: string,
+  mongo: any
 ): Promise<any> => {
   try {
-    const comments = await getCommentsByPostId(postId, mongo);
-    const post = await getPostById(postId, mongo);
-
-    return {
-      post: {
-        ...post,
-        comments: comments,
-      },
-    };
+    return await getPostById(postId, mongo);
   } catch (error) {
     console.log({ error });
     throw new Error("500");

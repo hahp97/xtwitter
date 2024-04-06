@@ -11,6 +11,7 @@ import postRouter from "./controller/post";
 import commentRouter from "./controller/comment";
 import getUserData from "./middleware/getUserData ";
 import authenticateUser from "./middleware/authHandler";
+import likeRouter from "./controller/like";
 
 const start = async () => {
   const app = express();
@@ -40,7 +41,8 @@ const start = async () => {
 
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/posts", postRouter);
-  app.use("/api/v1/posts", commentRouter);
+  app.use("/api/v1/comments", commentRouter);
+  app.use("/api/v1/likes", likeRouter);
 
   app.listen(configEnviroment.PORT, () => {
     console.log(`Server is running on port: ${configEnviroment.PORT}`);

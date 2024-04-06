@@ -1,23 +1,30 @@
-import { ObjectId } from "mongodb";
-import { createComment } from "../repositories/comments";
-import { getPostById } from "../repositories/post";
+import {
+  Comment,
+  createComment,
+  getCommentsByPostId,
+} from "../repositories/comments";
 
-export const addComment = async (
-  {
-    comment,
-    postId,
-    userId,
-  }: { comment: string; postId: string; userId: string },
+export const createNewComment = async (
+  comment: Comment,
   mongo: any
-) => {
-  const post = await getPostById(postId, mongo);
-
-  if (!post) {
-    throw new Error("404");
-  }
-
+): Promise<any> => {
   try {
-    return await createComment({ comment, postId, userId }, mongo);
+    const newComment: Comment = {
+      ...comment,
+    };
+    return await createComment(newComment, mongo);
+  } catch (error) {
+    console.log({ error });
+    throw new Error("500");
+  }
+};
+
+export const getPostComments = async (
+  postId: string,
+  mongo: any
+): Promise<any> => {
+  try {
+    return await getCommentsByPostId(postId, mongo);
   } catch (error) {
     console.log({ error });
     throw new Error("500");

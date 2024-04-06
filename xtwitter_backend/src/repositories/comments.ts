@@ -1,23 +1,35 @@
 import { ObjectId } from "mongodb";
 
-export const getCommentsByPostId = async (postId: string, mongo: any) => {
+export interface Comment {
+  _id?: ObjectId;
+  postId: ObjectId;
+  userId: ObjectId;
+  content: string;
+  createdAt: Date;
+}
+
+export const createComment = async (
+  comment: Comment,
+  mongo: any
+): Promise<any> => {
   try {
-    return await mongo.Comment.find({ postId }).toArray();
+    const result = await mongo.Comment.insertOne(comment);
+    return result.ops[0];
   } catch (error) {
     console.log({ error });
     throw new Error("500");
   }
 };
 
-export const createComment = async (
-  comment: { comment: string; postId: string; userId: string },
+export const getCommentsByPostId = async (
+  postId: string,
   mongo: any
-) => {
+): Promise<any> => {
   try {
-    return await mongo.Comment.insertOne({
-      ...comment,
-      postId: new ObjectId(comment.postId),
-    });
+    const comments = await mongo.Comment.find({
+      postId: new ObjectId(postId),
+    }).toArray();
+    return comments;
   } catch (error) {
     console.log({ error });
     throw new Error("500");
