@@ -7,7 +7,7 @@ const authenticateUser = async (req: any, res: any, next: any) => {
   if (accessToken) {
     try {
       const user = tokenize.verify(accessToken);
-      req.context.user = user?.data;
+      req.user = user?.data;
       next();
     } catch (error) {
       res.status(401).json({ error: "Invalid access token" });

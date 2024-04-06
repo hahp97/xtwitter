@@ -35,10 +35,6 @@ const start = async () => {
 
   app.use("/api/v1", authenticateUser, getUserData);
 
-  app.get("/", (req, res) => {
-    return res.send("Hello World");
-  });
-
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/posts", postRouter);
   app.use("/api/v1/comments", commentRouter);

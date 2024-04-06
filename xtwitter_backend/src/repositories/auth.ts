@@ -13,8 +13,7 @@ export const createUser = async (user: User, mongo: any): Promise<User> => {
   if (!password) {
     throw new Error("Password is required");
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  return await mongo.User.insertOne({ ...user, password: hashedPassword });
+  return await mongo.User.insertOne({ ...user });
 };
 
 export const findUserByEmail = async (
@@ -28,6 +27,17 @@ export const findUserByEmail = async (
 export const findUserById = async (
   id: ObjectId,
   mongo: any
-): Promise<{ email: string; userName: string }> => {
+): Promise<{ email: string; username: string }> => {
   return await mongo.User.findOne({ _id: id });
+};
+
+export const findUserByUsername = async (
+  username: string,
+  mongo: any
+): Promise<User | null> => {
+  try {
+    return await mongo.User.findOne({ username });
+  } catch (error) {
+    throw new Error("Database error");
+  }
 };

@@ -8,90 +8,35 @@ export interface Post {
   updatedAt: Date;
 }
 
-export const createPost = async (post: Post, mongo: any): Promise<any> => {
+export const createPost = async (post: Post, mongo: any): Promise<ObjectId> => {
   try {
     const result = await mongo.Post.insertOne(post);
-    return result.ops[0];
+    return result.insertedId;
   } catch (error) {
     console.log({ error });
-    throw new Error("500");
+    throw new Error("Failed to create post");
   }
 };
 
-export const getPosts = async (mongo: any): Promise<any> => {
+export const getPosts = async (mongo: any): Promise<Post[]> => {
   try {
-    const posts = await mongo.Post.aggregate([
-      {
-        $lookup: {
-          from: "Comment",
-          localField: "_id",
-          foreignField: "postId",
-          as: "comments",
-        },
-      },
-      {
-        $lookup: {
-          from: "Like",
-          localField: "_id",
-          foreignField: "postId",
-          as: "likes",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          content: 1,
-          userId: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          commentCount: { $size: "$comments" },
-          likeCount: { $size: "$likes" },
-        },
-      },
-    ]).toArray();
+    const posts = await mongo.Post.find().toArray();
     return posts;
   } catch (error) {
     console.log({ error });
-    throw new Error("500");
+    throw new Error("Failed to get posts");
   }
 };
 
-export const getPostById = async (postId: string, mongo: any): Promise<any> => {
+export const getPostById = async (
+  postId: string,
+  mongo: any
+): Promise<Post | null> => {
   try {
-    const post = await mongo.Post.aggregate([
-      { $match: { _id: new ObjectId(postId) } },
-      {
-        $lookup: {
-          from: "Comment",
-          localField: "_id",
-          foreignField: "postId",
-          as: "comments",
-        },
-      },
-      {
-        $lookup: {
-          from: "Like",
-          localField: "_id",
-          foreignField: "postId",
-          as: "likes",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          content: 1,
-          userId: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          comments: 1,
-          commentCount: { $size: "$comments" },
-          likeCount: { $size: "$likes" },
-        },
-      },
-    ]).toArray();
-    return post[0];
+    const post = await mongo.Post.findOne({ _id: new ObjectId(postId) });
+    return post || null;
   } catch (error) {
     console.log({ error });
-    throw new Error("500");
+    throw new Error("Failed to get post by id");
   }
 };

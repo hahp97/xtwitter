@@ -13,6 +13,11 @@ router.post("/login", async (req: any, res: Response, next: NextFunction) => {
   try {
     const user = req.body;
     const { mongo } = req.context || {};
+
+    if (!user.email || !user.password) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
     const existingUser = await handleLogin(user, mongo);
 
     const token = tokenize.create(existingUser);
@@ -31,41 +36,49 @@ router.post("/login", async (req: any, res: Response, next: NextFunction) => {
 });
 
 // POST /api/v1/auth/register
-router.post("/register", async (req: any, res) => {
+router.post("/register", async (req: any, res: Response) => {
   try {
     const { mongo } = req.context || {};
     const user: User = req.body;
-    await registerUser(user, mongo);
-    res.status(201).json({ message: "User created" });
-  } catch (error) {
-    res.status(400).json(error);
+
+    if (!user.email || !user.password || !user.username) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const newUser = await registerUser(user, mongo);
+
+    console.log({ newUser });
+    res.status(201).json({
+      message: "User created",
+      user: {
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 });
 
 // GET /api/v1/auth/me
-router.get("/me", async (req: any, res: any, next: any) => {
+router.get("/me", async (req: any, res: Response) => {
   try {
-    const accessToken = req.headers["x-token"];
-    if (!accessToken) {
-      return res.status(401).json({ message: "Unauthenticated" });
-    }
-    const user = tokenize.verify(accessToken);
-    const { mongo } = req.context || {};
+    const { mongo, user } = req.context || {};
 
-    const userData = await findUserById(new ObjectId(user.data?.id), mongo);
+    const userInfo = await findUserById(new ObjectId(user._id), mongo);
 
-    if (!userData) {
+    if (!userInfo) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("userData", userData);
-
     res.status(200).json({
-      userName: userData.userName,
-      email: userData.email,
+      message: "User found",
+      user: {
+        username: userInfo.username,
+        email: userInfo.email,
+      },
     });
   } catch (error) {
-    console.error("Error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
