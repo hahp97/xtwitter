@@ -1,16 +1,21 @@
-import { useRouter } from 'next/navigation';
-import React, { Suspense, useEffect } from 'react';
-import SideBar from './sidebar';
+import React, { type ReactNode } from "react";
+import Sidebar from "./sidebar";
+import RightBar from "./rightBar";
 
-const CoreDashboard = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="w-full">
-      <div className="flex h-screen">
-        <SideBar />
-        <Suspense>{children}</Suspense>
+    <div className="h-screen bg-black">
+      <div className="xl:px-30 container mx-auto h-full max-w-6xl">
+        <div className="grid h-full grid-cols-4">
+          <Sidebar />
+          <div className="border-x-1 col-span-3 h-full overflow-y-auto border-neutral-700">
+            {children}
+          </div>
+          <RightBar />
+        </div>
       </div>
     </div>
   );
 };
 
-export default CoreDashboard;
+export default Layout;

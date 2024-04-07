@@ -1,17 +1,19 @@
-import type { IPlainObject } from '@/types/common';
-import axios, { Axios, AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import Cookies from 'universal-cookie';
+import type { IPlainObject } from "@/types/common";
+import axios, {
+  Axios,
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+} from "axios";
+import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-const token = cookies.get('token');
+const token = cookies.get("token");
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: "http://localhost:5000",
   timeout: 60000,
-  timeoutErrorMessage: 'timeout',
-  headers: {
-    'x-token': token,
-  },
+  timeoutErrorMessage: "timeout",
 });
 
 axiosInstance.interceptors.response.use(
@@ -19,17 +21,25 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    if (error.message === 'timeout') {
-      console.log('timeout');
+    if (error.message === "timeout") {
+      console.log("timeout");
     }
     return Promise.reject(error.response?.data || error.message);
   },
 );
 
-axiosInstance.interceptors.request
-  .use
-  // TODO: Add request interceptor for headers
-  ();
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = cookies.get("token");
+    if (token) {
+      config.headers["x-token"] = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 const getAxiosInstance = (): Axios => axiosInstance;
 
@@ -37,11 +47,23 @@ const getResponseData = <T>(response: AxiosResponse): T => {
   return (response?.data || response) as T;
 };
 
-export function postRequest(URL: string, payload: IPlainObject, config?: AxiosRequestConfig) {
+export function getRequest(URL: string, config?: AxiosRequestConfig) {
+  return axiosInstance.get(URL, config);
+}
+
+export function postRequest(
+  URL: string,
+  payload: IPlainObject,
+  config?: AxiosRequestConfig,
+) {
   return axiosInstance.post(URL, payload, config);
 }
 
-export function putRequest(URL: string, payload: IPlainObject, config?: AxiosRequestConfig) {
+export function putRequest(
+  URL: string,
+  payload: IPlainObject,
+  config?: AxiosRequestConfig,
+) {
   return axiosInstance.put(URL, payload, config);
 }
 

@@ -1,20 +1,47 @@
-import Link from 'next/link';
-import SideBarRouter from './sidebarRouter';
-import { BsTwitterX } from 'react-icons/bs';
-import ProfileButton from './profileButton';
+import { BiLogOut } from "react-icons/bi";
+import { BsHouseFill, BsBellFill } from "react-icons/bs";
+import { FaUser } from "react-icons/fa";
 
-const SideBar = () => {
+import Logo from "../../logo";
+import SidebarItem from "./item";
+import useCurrentUser from "@/hooks/useCurrentuser";
+
+const Sidebar = () => {
+  const { data: currentUser } = useCurrentUser();
+
+  const items = [
+    {
+      icon: BsHouseFill,
+      label: "Home",
+      href: "/",
+    },
+    {
+      icon: FaUser,
+      label: "Profile",
+      href: `/user/${currentUser?.username}`,
+      auth: true,
+    },
+  ];
+
   return (
-    <div className="h-[100%] overflow-y-auto hidden border-r-2 lg:w-1/4 md:w-2/5 md:max-w-[350px] p-4 shadow-lg md:flex md:flex-col justify-between">
-      <div>
-        <div className="pl-4">
-          <BsTwitterX />
+    <div className="col-span-1 h-full pr-4">
+      <div className="flex flex-col items-end">
+        <div className="space-y-2">
+          <Logo />
+          {items.map((item) => (
+            <SidebarItem
+              key={item.href}
+              auth={item.auth}
+              href={item.href}
+              icon={item.icon}
+              label={item.label}
+            />
+          ))}
+          {/* TODO: handle signout */}
         </div>
-        <SideBarRouter />
       </div>
-      <ProfileButton />
     </div>
   );
 };
 
-export default SideBar;
+export default Sidebar;

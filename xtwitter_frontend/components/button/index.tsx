@@ -4,10 +4,11 @@ import type { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   outline?: boolean;
-  small?: boolean;
+  large?: boolean;
   fullWidth?: boolean;
   width?: string;
   onClick: () => void;
+  secondary?: boolean;
 }
 
 const CommonButton: React.FC<ButtonProps> = ({
@@ -15,21 +16,29 @@ const CommonButton: React.FC<ButtonProps> = ({
   onClick,
   disabled,
   outline,
-  small,
+  large,
   fullWidth = true,
   width,
+  secondary,
   ...props
 }) => {
   const buttonClasses = classNames(
-    `inline-flex items-center justify-center rounded-lg transition ${
-      fullWidth ? "w-full" : width
+    `disabled:opacity-70
+    disabled:cursor-not-allowed
+    rounded-full
+    font-semibold
+    hover:opacity-80
+    transition
+    border-2 ${
+      fullWidth ? "w-full" : 'w-fit'
     }`,
     outline
-      ? "bg-white border-black text-black"
-      : "bg-rose-500 border-rose-500 text-white",
-    small
-      ? "text-sm py-1 font-light border-[1px]"
-      : "text-md py-3 font-semibold border-2",
+      ? "bg-transparent border-white text-white"
+      : "",
+    large
+      ? "text-xl py-5 font-light py-3"
+      : "text-md py-4 font-semibold py-3",
+    secondary ? 'bg-white text-black border-black' : 'bg-sky-500 text-white border-sky-500',
     disabled && "opacity-50",
     props.className
   );
@@ -41,7 +50,7 @@ const CommonButton: React.FC<ButtonProps> = ({
       onClick={onClick}
       className={buttonClasses}
     >
-      <div className="px-3">{label}</div>
+      {label}
     </button>
   );
 };

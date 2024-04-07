@@ -30,7 +30,7 @@ function isNumber(c: string) {
 
 const textFieldVariants = cva(
   [
-    "flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+    "w-full p-4 text-lg bg-black border-2 border-neutral-800 rounded-md outline-none text-white focus:border-sky-500 focus:border-2 transition disabled:bg-neutral-900 disabled:opacity-70 disabled:cursor-not-allowed"
   ],
   {
     variants: {
@@ -87,7 +87,7 @@ const CommonInput = ({
         className={tailwindMerge([
           textFieldVariants({ intent: intent, className: className }),
           errors && errors[name]?.message && "border-red-500",
-          isDisabled && "cursor-pointer",
+          isDisabled && "opacity-70 cursor-not-allowed",
         ])}
         disabled={intent === "disabled"}
         {...props}
