@@ -13,8 +13,6 @@ export const loginMutation = async (
 export const getProfile = async (
   payload: string,
 ): Promise<{ username: string; email: string }> => {
-  const response = await getAxiosInstance().get(AUTHENTICATION.ME, {
-    headers: { "x-token": payload },
-  }); // Done after setup axios
+  const response = await getAxiosInstance().get(AUTHENTICATION.ME);
   return getResponseData(response);
 };

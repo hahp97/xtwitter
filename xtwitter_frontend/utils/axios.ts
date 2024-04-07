@@ -8,7 +8,6 @@ import axios, {
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-const token = cookies.get("token");
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000",

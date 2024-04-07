@@ -1,18 +1,26 @@
-import { Controller, useForm, type FieldValues } from "react-hook-form";
+import { useCallback, useState } from "react";
+
+import CommonInput from "../input";
+import Modal from ".";
+import { Controller, set, useForm } from "react-hook-form";
 import { LoginModel } from "@/types/auth";
 import { classValidatorResolver } from "@hookform/resolvers/class-validator";
-import CommonInput from "@/components/input";
-import CommonButton from "@/components/button";
+import { useLoginModal, useSignupModal } from "@/hooks/useModal";
 import { loginMutation } from "@/apis/auth";
 import Cookies from "universal-cookie";
-import { useRouter } from "next/router";
-import { useSWRConfig } from "swr";
+import { Router } from "next/router";
+import { notify } from "@/utils/toast";
+
+import CommonButton from "../button";
 
 const resolver = classValidatorResolver(LoginModel);
 
-const PageLogin = () => {
-  const router = useRouter();
-  const { mutate } = useSWRConfig();
+type LoginModalProps = {
+  onClose: () => void;
+};
+
+const LoginModal = ({ onClose }: LoginModalProps) => {
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -26,23 +34,50 @@ const PageLogin = () => {
     resolver,
   });
 
-  const handleSubmitForm = handleSubmit(async (data) => {
-    console.log(data);
-    const res = await mutate("login", loginMutation(data));
+  const onSubmit = handleSubmit(async (data) => {
+    const res = await loginMutation(data);
 
     if (res) {
       const cookies = new Cookies();
       cookies.set("token", res.token, { path: "/" });
-      router.replace("/dashboard");
+      notify.success("Login successful");
+      onClose();
     } else {
-      console.log("Login failed");
+      notify.error("Login failed");
     }
   });
 
+  const footerContent = (
+    <div className="flex flex-row justify-between">
+      <button
+        onClick={() => {
+          onClose();
+        }}
+        className="text-blue-500"
+      >
+        Sign up
+      </button>
+      <button
+        onClick={() => {
+          onClose();
+        }}
+        className="text-blue-500"
+      >
+        Forgot password?
+      </button>
+    </div>
+  );
+
   return (
-    <form>
-      <div>
-        <label htmlFor="email">Email</label>
+    <Modal
+      disabled={isLoading}
+      title="Login"
+      actionLabel="Sign in"
+      onClose={onClose}
+      onSubmit={onSubmit}
+      footer={footerContent}
+    >
+      <div className="flex flex-col gap-4">
         <Controller
           name="email"
           control={control}
@@ -51,15 +86,12 @@ const PageLogin = () => {
               name="email"
               value={value}
               onChange={onChange}
-              placeholder="Username@gmail.com"
+              placeholder="email"
               className="focus-visible:ring-none my-2 rounded-full border-gray-200 py-6 text-base "
               errors={errors}
             />
           )}
         />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
         <Controller
           name="password"
           control={control}
@@ -75,11 +107,11 @@ const PageLogin = () => {
             />
           )}
         />
-      </div>
 
-      <CommonButton label={"Sign Up"} onClick={handleSubmitForm} />
-    </form>
+        <CommonButton label={"Login "} onClick={onSubmit} />
+      </div>
+    </Modal>
   );
 };
 
-export default PageLogin;
+export default LoginModal;

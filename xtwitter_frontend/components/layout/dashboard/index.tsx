@@ -5,10 +5,10 @@ import RightBar from "./rightBar";
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="h-screen bg-black">
-      <div className="xl:px-30 container mx-auto h-full max-w-6xl">
-        <div className="grid h-full grid-cols-4">
+      <div className="container mx-auto h-full">
+        <div className="grid h-full grid-cols-5">
           <Sidebar />
-          <div className="border-x-1 col-span-3 h-full overflow-y-auto border-neutral-700">
+          <div className="col-span-3 h-full overflow-y-auto border-x-2 border-neutral-700">
             {children}
           </div>
           <RightBar />
